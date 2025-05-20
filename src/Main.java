@@ -8,6 +8,18 @@ public class Main {
         Room room001 = new Room("Kuchnia", RoomType.KUCHNIA, 21);
         room001.addDevice(temp001);
 
+        Thread b = new Thread(() -> {
+           while (true) {
+               try {
+                   Thread.sleep(3000);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               room001.updateTemperature();
+           }
+        });
+        b.start();
+
         Thread a = new Thread(() -> {
            while (true) {
                 try {

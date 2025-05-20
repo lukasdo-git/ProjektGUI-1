@@ -56,24 +56,35 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     }
 
     public void changeBattery() {
-        thread.interrupt();
+
+        running = false;
+        if (thread != null && thread.isAlive()) {
+            thread.interrupt();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
         this.batteryCycles = 50;
         super.setStatus(DeviceStatus.ACTIVE);
         System.out.println(super.toString()+"\t Wymieniono baterię");
 
-        if(!running || !thread.isAlive()) {
-            running = true;
-            this.thread = new Thread(() -> {
-                while(running) {
-                    try {
-                        this.simulate();
-                        Thread.sleep(readCycleTime);
-                    } catch (IllegalAccessException | InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+        running = true;
+        thread = new Thread(() -> {
+            while (running) {
+                try {
+                    this.simulate();
+                    Thread.sleep(readCycleTime);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    running = false;
+                    Thread.currentThread().interrupt();
                 }
-            });
-        }
+            }
+        });
         thread.start();
 
     }
@@ -81,7 +92,6 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     @Override
     public void simulate() throws IllegalAccessException {
         if(super.getStatus() == DeviceStatus.FAULT) {
-            this.running = false;
             throw new IllegalAccessException("\t Błąd czujnika.");
         }
         if(this.batteryCycles <=15) {
