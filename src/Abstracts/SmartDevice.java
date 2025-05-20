@@ -5,12 +5,17 @@ import Enums.DeviceStatus;
 import java.util.UUID;
 
 public abstract class SmartDevice {
-    UUID deviceId;
-    String deviceName;
-    DeviceStatus deviceStatus;
-    DeviceStatus[] validStatuses;
+    private UUID deviceId;
+    private String deviceName;
+    private DeviceStatus deviceStatus;
 
-    public abstract void simulate();
+    public SmartDevice(String deviceName) {
+        this.deviceId = UUID.randomUUID();
+        this.deviceName = deviceName;
+        this.deviceStatus = DeviceStatus.OFF;
+    }
+
+    public abstract void simulate() throws IllegalAccessException;
 
     public void setStatus(DeviceStatus status) {
         this.deviceStatus = status;
@@ -21,6 +26,6 @@ public abstract class SmartDevice {
 
     @Override
     public String toString() {
-        return "["+this.deviceId+"] "+this.deviceName+": Status "+this.deviceStatus;
+        return "["+this.deviceId+"] "+this.deviceName+": \tStatus "+this.deviceStatus;
     }
 }
