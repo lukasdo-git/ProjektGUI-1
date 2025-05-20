@@ -1,15 +1,15 @@
-package Classes;
+package classes.devices;
 
-import Abstracts.SmartDevice;
-import Enums.DeviceStatus;
-import Interfaces.Switchable;
+import abstracts.SmartDevice;
+import enums.DeviceStatus;
+import interfaces.Switchable;
 
 import java.awt.*;
 
 public class Lightbulb extends SmartDevice implements Switchable {
-    private int hue;
-    private double saturation;
-    private double value;
+    private final int hue;
+    private final double saturation;
+    private final double value;
     private DeviceStatus status;
 
     public Lightbulb(String name, int hue, double saturation, double value) {
@@ -39,13 +39,13 @@ public class Lightbulb extends SmartDevice implements Switchable {
 
     @Override
     public boolean isOn() {
-        return this.status == DeviceStatus.ON;
+        return status == DeviceStatus.ON;
     }
 
     public Color getRGBColor() {
-        double C = this.value * this.saturation;
-        double X = C * (1 - Math.abs((this.hue / 60.0) % 2 - 1));
-        double m = this.value - C;
+        double C = value * saturation;
+        double X = C * (1 - Math.abs((hue / 60.0) % 2 - 1));
+        double m = value - C;
 
         double r1 = 0, g1 = 0, b1 = 0;
 

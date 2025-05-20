@@ -1,4 +1,4 @@
-package Interfaces;
+package interfaces;
 
 public interface SensorDevice<T> {
     public T readValue();

@@ -1,35 +1,47 @@
-package Classes;
+package classes.devices;
 
-import Abstracts.SmartDevice;
-import Enums.DeviceStatus;
-import Interfaces.SensorDevice;
+import abstracts.SmartDevice;
+import classes.house.Room;
+import enums.DeviceStatus;
+import interfaces.SensorDevice;
 
 public class TemperatureSensor extends SmartDevice implements SensorDevice<Double> {
 
     private Double temperature;
-    private int batteryCycles;
+    private int batteryCycles = 50;
+    private Room room;
+    private int readCycleTime = 1000;
 
     private Thread thread;
-    private boolean running;
+    private boolean running = false;
+    private boolean started = false;
 
     public TemperatureSensor(String deviceName) {
         super(deviceName);
         super.setStatus(DeviceStatus.ACTIVE);
-        this.batteryCycles = 50;
-        this.running = true;
-        this.thread = new Thread(() -> {
-            while(running) {
-                try {
-                    this.simulate();
-                    Thread.sleep(200);
-                } catch (IllegalAccessException | InterruptedException e) {
-                    running = false;
-                    throw new RuntimeException(e);
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+
+        if(!started) {
+            started = true;
+            running = true;
+
+            this.thread = new Thread(() -> {
+                while(running) {
+                    try {
+                        this.simulate();
+                        Thread.sleep(readCycleTime);
+                    } catch (IllegalAccessException | InterruptedException e) {
+                        running = false;
+                        throw new RuntimeException(e);
+                    }
                 }
             }
+            );
+            thread.start();
         }
-        );
-        thread.start();
     }
 
     @Override
@@ -55,14 +67,14 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
                 while(running) {
                     try {
                         this.simulate();
-                        Thread.sleep(200);
+                        Thread.sleep(readCycleTime);
                     } catch (IllegalAccessException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }
             });
-            thread.start();
         }
+        thread.start();
 
     }
 
@@ -84,7 +96,7 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         }
 
         this.batteryCycles -= 1;
-        this.temperature = (Math.random() * 80) - 40;
+        this.temperature = this.room.getTemperature();
         System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
 
     }

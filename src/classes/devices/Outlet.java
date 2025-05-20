@@ -1,11 +1,11 @@
-package Classes;
+package classes.devices;
 
-import Abstracts.SmartDevice;
-import Interfaces.Switchable;
+import abstracts.SmartDevice;
+import interfaces.Switchable;
 
 public class Outlet extends SmartDevice implements Switchable {
     private double powerDraw;
-    private int numberOfSockets;
+    private final int numberOfSockets;
     private boolean devicePluggedIn;
 
     public Outlet(String deviceName, int numberOfSockets) {

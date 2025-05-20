@@ -1,6 +1,6 @@
-package Abstracts;
+package abstracts;
 
-import Enums.DeviceStatus;
+import enums.DeviceStatus;
 
 import java.util.UUID;
 

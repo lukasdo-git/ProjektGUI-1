@@ -1,27 +1,23 @@
-import Classes.Lightbulb;
-import Classes.Outlet;
-import Classes.TemperatureSensor;
+import classes.devices.TemperatureSensor;
+import classes.house.Room;
+import enums.RoomType;
 
 public class Main {
     public static void main(String[] args) {
         TemperatureSensor temp001 = new TemperatureSensor("temp001");
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        temp001.changeBattery();
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        temp001.changeBattery();
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        temp001.changeBattery();
+        Room room001 = new Room("Kuchnia", RoomType.KUCHNIA, 21);
+        room001.addDevice(temp001);
+
+        Thread a = new Thread(() -> {
+           while (true) {
+                try {
+                   Thread.sleep(15000);
+                   temp001.changeBattery();
+               } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+           }
+        });
+        a.start();
     }
 }
