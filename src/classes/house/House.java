@@ -1,6 +1,7 @@
 package classes.house;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class House {
     private String name;
@@ -19,6 +20,7 @@ public class House {
 
     public void addRoom(Room room) {
         rooms.add(room);
+        sortRoomsByType();
     }
 
     public void removeRoom(Room room) {
@@ -29,6 +31,18 @@ public class House {
         return !rooms.isEmpty();
     }
 
+    public int getNumOfRooms() {
+        return rooms.size();
+    }
+
+    public void sortRoomsByType() {
+        rooms.sort(Comparator.comparing(Room::getRoomType));
+    }
+
+    public ArrayList<Room> getRooms() {
+        return rooms;
+    }
+
     public String getName() {
         return name;
     }
@@ -37,8 +51,11 @@ public class House {
         this.name = name;
     }
 
-    public String getCoords() {
-        return xCoordinate + "," + yCoordinate;
+    public float getXCoord() {
+        return xCoordinate;
+    }
+    public float getYCoord() {
+        return yCoordinate;
     }
 
     public int getId() {

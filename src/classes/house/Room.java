@@ -2,7 +2,6 @@ package classes.house;
 
 import abstracts.SmartDevice;
 import classes.devices.TemperatureSensor;
-import enums.DeviceStatus;
 import enums.RoomType;
 
 import java.util.ArrayList;
@@ -11,15 +10,17 @@ import java.util.stream.Collectors;
 
 public class Room {
 
-    private final String name;
+    private String name;
+    private final int id;
     private final RoomType type;
     private List<SmartDevice> devices;
 
     private double currentTemp;
     private final double ambientTemp;
 
-    public Room(String name, RoomType type, double ambientTemp) {
+    public Room(String name, int id, RoomType type, double ambientTemp) {
         this.name = name;
+        this.id = id;
         this.type = type;
         this.devices = new ArrayList<>();
         this.ambientTemp = ambientTemp;
@@ -29,6 +30,12 @@ public class Room {
     public String getName() {
         return name;
     }
+    public void setName(String name) { this.name = name; }
+    public RoomType getRoomType() { return type; }
+    public int getId() { return id; }
+    public double getTemperature() {
+        return currentTemp;
+    }
 
     public void addDevice(SmartDevice device) {
         devices.add(device);
@@ -36,10 +43,6 @@ public class Room {
         if(device instanceof TemperatureSensor sensor) {
             sensor.setRoom(this);
         }
-    }
-
-    public double getTemperature() {
-        return currentTemp;
     }
 
     public <T extends SmartDevice> List<T> getDevicesByType(Class<T> type) {
