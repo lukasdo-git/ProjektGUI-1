@@ -1,6 +1,7 @@
 package classes.devices;
 
 import abstracts.SmartDevice;
+import enums.DeviceType;
 import interfaces.Switchable;
 
 public class Outlet extends SmartDevice implements Switchable {
@@ -8,17 +9,18 @@ public class Outlet extends SmartDevice implements Switchable {
     private final int numberOfSockets;
     private boolean devicePluggedIn;
 
-    public Outlet(String deviceName, int numberOfSockets) {
+    public Outlet(int deviceId, String deviceName, int numberOfSockets) {
         this.powerDraw = 0;
         this.numberOfSockets = numberOfSockets;
         this.devicePluggedIn = false;
-        super(deviceName);
+        super(deviceId, deviceName, DeviceType.OUTLET);
     }
 
     @Override
     public void simulate() {
 
     }
+
 
     @Override
     public void turnOn() throws IllegalStateException{

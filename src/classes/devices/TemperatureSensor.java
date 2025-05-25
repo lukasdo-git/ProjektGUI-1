@@ -3,6 +3,7 @@ package classes.devices;
 import abstracts.SmartDevice;
 import classes.house.Room;
 import enums.DeviceStatus;
+import enums.DeviceType;
 import interfaces.SensorDevice;
 
 public class TemperatureSensor extends SmartDevice implements SensorDevice<Double> {
@@ -16,8 +17,8 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     private boolean running = false;
     private boolean started = false;
 
-    public TemperatureSensor(String deviceName) {
-        super(deviceName);
+    public TemperatureSensor(int deviceId, String deviceName) {
+        super(deviceId, deviceName, DeviceType.TEMPSENSOR);
         super.setStatus(DeviceStatus.ACTIVE);
     }
 
@@ -92,11 +93,12 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     @Override
     public void simulate() throws IllegalAccessException {
         if(super.getStatus() == DeviceStatus.FAULT) {
-            throw new IllegalAccessException("\t Błąd czujnika.");
+            if(super.isLive()) System.out.println(super.toString() + "\t BŁĄD CZUJNIKA");
+            throw new IllegalAccessException("Błąd czujnika");
         }
         if(this.batteryCycles <=15) {
             super.setStatus(DeviceStatus.LOW_BATTERY);
-            System.out.println(super.toString() + "\t UWAGA - niski poziom baterii");
+            if(super.isLive()) System.out.println(super.toString() + "\t UWAGA - niski poziom baterii");
         }
 
         double rollForFault = Math.random();
@@ -107,7 +109,7 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
 
         this.batteryCycles -= 1;
         this.temperature = this.room.getTemperature();
-        System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
+        if(super.isLive()) System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
 
     }
 }

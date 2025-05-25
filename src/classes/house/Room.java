@@ -1,7 +1,10 @@
 package classes.house;
 
 import abstracts.SmartDevice;
+import classes.Rule;
+import classes.devices.Heater;
 import classes.devices.TemperatureSensor;
+import enums.DeviceStatus;
 import enums.RoomType;
 
 import java.util.ArrayList;
@@ -14,6 +17,10 @@ public class Room {
     private final int id;
     private final RoomType type;
     private List<SmartDevice> devices;
+    private Thread thread;
+    private boolean running = true;
+
+    private final List<Rule<? extends SmartDevice>> rules = new ArrayList<>();
 
     private double currentTemp;
     private final double ambientTemp;
@@ -25,6 +32,29 @@ public class Room {
         this.devices = new ArrayList<>();
         this.ambientTemp = ambientTemp;
         this.currentTemp = ambientTemp + (Math.random()*10) - 5;
+        this.thread = new Thread(() -> {
+            while(running) {
+                try{
+                    updateTemperature();
+                    Thread.sleep(600);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
+    }
+
+    public void addRule(Rule<? extends SmartDevice> rule) {
+        rules.add(rule);
+    }
+
+    public void removeRule(int i) {
+        rules.remove(i);
+    }
+
+    public List<Rule<? extends SmartDevice>> getRules() {
+        return rules;
     }
 
     public String getName() {
@@ -35,6 +65,15 @@ public class Room {
     public int getId() { return id; }
     public double getTemperature() {
         return currentTemp;
+    }
+    public boolean hasDevices() {
+        return devices.size() > 0;
+    }
+    public List<SmartDevice> getDevices() {
+        return devices;
+    }
+    public int getNumOfDevices() {
+        return devices.size();
     }
 
     public void addDevice(SmartDevice device) {
@@ -56,11 +95,16 @@ public class Room {
         if(currentTemp > ambientTemp) currentTemp -= (Math.random()*3)-1.5;
         if(currentTemp < ambientTemp) currentTemp += (Math.random()*3)-1.5;
 
-        //int activeHeaters = getDevicesByType(Heater.class).stream()
-        //        .filter(h -> h.getStatus() == DeviceStatus.ON)
-        //        .count();
+        List<Heater> activeHeaters = getDevicesByType(Heater.class).stream()
+                .filter(h -> h.getStatus() == DeviceStatus.ON)
+                .toList();
 
-        //currentTemp += 0.1 * activeHeaters;
+        int totalHeatingPower = 0;
+        for(Heater heater : activeHeaters) {
+            totalHeatingPower += heater.getHeatingPower();
+        }
+
+        currentTemp += 0.1 * ((double) totalHeatingPower /100);
     }
 
 

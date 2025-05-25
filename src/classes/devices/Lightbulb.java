@@ -2,6 +2,7 @@ package classes.devices;
 
 import abstracts.SmartDevice;
 import enums.DeviceStatus;
+import enums.DeviceType;
 import interfaces.Switchable;
 
 import java.awt.*;
@@ -12,11 +13,11 @@ public class Lightbulb extends SmartDevice implements Switchable {
     private final double value;
     private DeviceStatus status;
 
-    public Lightbulb(String name, int hue, double saturation, double value) {
+    public Lightbulb(int deviceId, String deviceName, int hue, double saturation, double value) {
         this.hue = hue;
         this.saturation = saturation;
         this.value = value;
-        super(name);
+        super(deviceId, deviceName, DeviceType.LIGHTBULB);
     }
 
     @Override

@@ -3,24 +3,47 @@ package classes.devices;
 import abstracts.SmartDevice;
 import classes.house.Room;
 import enums.DeviceStatus;
+import enums.DeviceType;
 import interfaces.Switchable;
 
 public class Heater extends SmartDevice implements Switchable {
-    private boolean running = false;
+    private boolean running;
     private Thread thread;
-    private final double heatingPower;
+    private final int heatingPower;
+    private final int heatCycleTime = 1000;
     private Room room;
 
-    public Heater(String deviceName, double heatingPower) {
-        super(deviceName);
+    public Heater(int deviceId, String deviceName, int heatingPower) {
+        super(deviceId, deviceName, DeviceType.HEATER);
         this.heatingPower = heatingPower;
-        this.setStatus(DeviceStatus.OFF);
+        this.setStatus(DeviceStatus.ON);
+
+        running = true;
+        thread = new Thread(() -> {
+            while (running) {
+                try {
+                    this.simulate();
+                    Thread.sleep(heatCycleTime);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    running = false;
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        thread.start();
+
     }
 
 
     @Override
     public void simulate() throws IllegalAccessException {
+        System.out.println(super.toString()+"\t ogrzewa pokój "+this.room);
+    }
 
+    public int getHeatingPower() {
+        return heatingPower;
     }
 
     @Override
