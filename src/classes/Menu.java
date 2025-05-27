@@ -34,9 +34,7 @@ public class Menu {
         running = true;
         Thread menu = new Thread(()->{
             System.out.println("Symulowany system zarządzania SmartHouse\n");
-            while(running) {
-                display();
-            }
+            while(running) { display(); }
         });
         menu.start();
     }
@@ -46,7 +44,6 @@ public class Menu {
         if(menu == 0) {
             if(houseArrayList.isEmpty()) {
                 System.out.println("\nBrak zarejestrowanych domów.\n");
-
                 System.out.println("Dostępne polecenia: (D)odaj dom ");
             } else {
                 System.out.println("\nZarejestrowane domy:");
@@ -56,8 +53,6 @@ public class Menu {
                 System.out.println("\nDostępne polecenia: (D)odaj dom, (U)suń dom, (Z)mień nazwę domu");
                 System.out.println("lub podaj numer domu");
             }
-
-
         }
 
         // menu zarządzania pokojami w domku
@@ -198,7 +193,6 @@ public class Menu {
                     return;
                 }
                 newDevice(chosenRoom.getNumOfDevices()+1, name, type);
-
             }
             if(!chosenRoom.hasDevices()) return;
             if(command == 'u') {
@@ -448,6 +442,4 @@ public class Menu {
         observable.addObserver(logObserver);
         logger.log(newDevice, LogType.DEVICE_ADDED, "Dodano nowe urządzenie do pokoju.");
     }
-
-
 }
