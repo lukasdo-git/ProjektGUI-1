@@ -3,15 +3,22 @@ package classes.devices;
 import abstracts.SmartDevice;
 import enums.DeviceStatus;
 import enums.DeviceType;
+import enums.LogType;
+import interfaces.DeviceObserver;
+import interfaces.ObservableDevice;
 import interfaces.Switchable;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Lightbulb extends SmartDevice implements Switchable {
+public class Lightbulb extends SmartDevice implements Switchable, ObservableDevice {
     private int hue;
     private double saturation;
     private double value;
     private DeviceStatus status;
+
+    private final List<DeviceObserver> observers = new ArrayList<>();
 
     public Lightbulb(int deviceId, String deviceName, int hue, double saturation, double value) {
         this.hue = hue;
@@ -26,16 +33,19 @@ public class Lightbulb extends SmartDevice implements Switchable {
             throw new IllegalAccessException("\t Żarówka jest wyłączona.");
         }
         System.out.println(super.toString() + "\t symulacja: świeci na kolor " + this.getRGBColor().toString());
+        notifyObservers(LogType.READING, "shines with RGB color " + this.getRGBColor().toString());
     }
 
     @Override
     public void turnOn() {
         super.setStatus(DeviceStatus.ON);
+        notifyObservers("Turned on");
     }
 
     @Override
     public void turnOff() {
         super.setStatus(DeviceStatus.OFF);
+        notifyObservers("Turned off");
     }
 
     @Override
@@ -88,11 +98,36 @@ public class Lightbulb extends SmartDevice implements Switchable {
         g = Math.min(255, Math.max(0, g));
         b = Math.min(255, Math.max(0, b));
 
+        notifyObservers(LogType.STATUS_CHANGE, "changed color to RGB " + r + " " + g + " " + b);
         return new Color(r, g, b);
     }
 
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    @Override
+    public void addObserver(DeviceObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(DeviceObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventDescription);
+        }
+    }
+
+    @Override
+    public void notifyObservers(LogType eventType, String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventType, eventDescription);
+        }
     }
 }

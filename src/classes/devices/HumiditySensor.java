@@ -4,6 +4,7 @@ import abstracts.SmartDevice;
 import classes.house.Room;
 import enums.DeviceStatus;
 import enums.DeviceType;
+import enums.LogType;
 import interfaces.DeviceObserver;
 import interfaces.ObservableDevice;
 import interfaces.SensorDevice;
@@ -46,6 +47,13 @@ public class HumiditySensor extends SmartDevice implements SensorDevice<Double>,
     }
 
     @Override
+    public void notifyObservers(LogType eventType, String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventType, eventDescription);
+        }
+    }
+
+    @Override
     public Double readValue() {
         if(super.getStatus() == DeviceStatus.FAULT) return 0.0;
         return this.humidity;
@@ -60,6 +68,9 @@ public class HumiditySensor extends SmartDevice implements SensorDevice<Double>,
     public void simulate() throws IllegalAccessException {
         if(super.getStatus() == DeviceStatus.OFF) return;
         if(super.getStatus() == DeviceStatus.FAULT) {
+            this.notifyObservers(LogType.FAULT_DETECTED, "Fault detected");
+            double rollForFix = Math.random();
+            if(rollForFix < 0.5) {fixFault();}
             if(super.isLive()) System.out.println(super.toString() + "\t BŁĄD CZUJNIKA");
             throw new IllegalAccessException("Błąd czujnika.");
         }
@@ -72,7 +83,7 @@ public class HumiditySensor extends SmartDevice implements SensorDevice<Double>,
 
         this.humidity = this.room.getHumidity();
         if(super.isLive()) System.out.println(super.toString()+"\t odczyt wilgotności: " + this.readValue());
-        this.notifyObservers("Humidity: " + this.humidity);
+        this.notifyObservers(LogType.READING, "Humidity: " + this.humidity);
     }
 
     public void fixFault() {
@@ -87,6 +98,7 @@ public class HumiditySensor extends SmartDevice implements SensorDevice<Double>,
         }
 
         super.setStatus(DeviceStatus.ON);
+        this.notifyObservers(LogType.FAULT_FIXED, "Fault fixed");
         System.out.println(super.toString()+"\t Usunięto usterkę");
 
         running = true;

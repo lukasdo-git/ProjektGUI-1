@@ -4,9 +4,16 @@ import abstracts.SmartDevice;
 import classes.house.Room;
 import enums.DeviceStatus;
 import enums.DeviceType;
+import enums.LogType;
+import interfaces.DeviceObserver;
+import interfaces.ObservableDevice;
 import interfaces.SensorDevice;
 
-public class TemperatureSensor extends SmartDevice implements SensorDevice<Double> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observer;
+
+public class TemperatureSensor extends SmartDevice implements SensorDevice<Double>, ObservableDevice {
 
     private Double temperature;
     private int batteryCycles = 50;
@@ -16,6 +23,8 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     private Thread thread;
     private boolean running = false;
     private boolean started = false;
+
+    private final List<DeviceObserver> observers = new ArrayList<>();
 
     public TemperatureSensor(int deviceId, String deviceName) {
         super(deviceId, deviceName, DeviceType.TEMPSENSOR);
@@ -46,6 +55,30 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     }
 
     @Override
+    public void addObserver(DeviceObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(DeviceObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventDescription);
+        }
+    }
+
+    @Override
+    public void notifyObservers(LogType eventType, String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventType, eventDescription);
+        }
+    }
+
+    @Override
     public Double readValue() {
         if(super.getStatus() == DeviceStatus.FAULT) return 0.0;
         return this.temperature;
@@ -71,6 +104,7 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         this.batteryCycles = 50;
         super.setStatus(DeviceStatus.ACTIVE);
         System.out.println(super.toString()+"\t Wymieniono baterię");
+        notifyObservers(LogType.FAULT_FIXED, "battery changed");
 
         running = true;
         thread = new Thread(() -> {
@@ -94,10 +128,12 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     public void simulate() throws IllegalAccessException {
         if(super.getStatus() == DeviceStatus.FAULT) {
             if(super.isLive()) System.out.println(super.toString() + "\t BŁĄD CZUJNIKA");
+            notifyObservers(LogType.FAULT_DETECTED, "Fault detected");
             throw new IllegalAccessException("Błąd czujnika");
         }
         if(this.batteryCycles <=15) {
             super.setStatus(DeviceStatus.LOW_BATTERY);
+            notifyObservers(LogType.FAULT_DETECTED, "Battery is low");
             if(super.isLive()) System.out.println(super.toString() + "\t UWAGA - niski poziom baterii");
         }
 
@@ -110,6 +146,6 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         this.batteryCycles -= 1;
         this.temperature = this.room.getTemperature();
         if(super.isLive()) System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
-
+        this.notifyObservers("Temperature: " + this.temperature);
     }
 }

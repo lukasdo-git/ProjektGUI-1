@@ -3,14 +3,20 @@ package classes.devices;
 import abstracts.SmartDevice;
 import enums.DeviceStatus;
 import enums.DeviceType;
+import enums.LogType;
 import interfaces.DeviceObserver;
 import interfaces.ObservableDevice;
 import interfaces.Switchable;
 
-public class InfoTablet extends SmartDevice implements DeviceObserver, Switchable {
+import java.util.ArrayList;
+import java.util.List;
+
+public class InfoTablet extends SmartDevice implements DeviceObserver, ObservableDevice, Switchable {
 
     private Thread thread;
     private boolean running = false;
+
+    private final List<DeviceObserver> observers = new ArrayList<>();
 
     public InfoTablet(int deviceId, String name, SmartDevice device) {
         super(deviceId, name, DeviceType.INFOTABLET);
@@ -40,12 +46,14 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
 
     private void attemptRestart() {
         new Thread(() -> {
+
             System.out.println(super.toString() + "\t Próba automatycznego restartu...");
             try {
                 Thread.sleep(3000); // opóźnienie restartu
                 if (getStatus() == DeviceStatus.FAULT) {
                     System.out.println(super.toString() + "\t Restart powiódł się.");
                     setStatus(DeviceStatus.ON);
+                    notifyObservers(LogType.FAULT_FIXED, "Fault fixed");
                 }
             } catch (InterruptedException ignored) {}
         }).start();
@@ -58,6 +66,7 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
         }
         if (Math.random() < 0.01) {
             super.setStatus(DeviceStatus.FAULT);
+            this.notifyObservers(LogType.FAULT_DETECTED, "Fault detected");
             throw new IllegalAccessException(super.toString() + "\t Tablet uległ awarii!");
         }
 
@@ -80,6 +89,15 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
     }
 
     @Override
+    public void onDeviceEvent(SmartDevice device, LogType logType, String event) {
+        if(super.getStatus() == DeviceStatus.ON) {
+            if(super.isLive()) {
+                System.out.println(super.toString() +"\t Wyświetla nowe zdarzenie -> " +device.toString() + event);
+            }
+        }
+    }
+
+    @Override
     public void turnOn() {
         if (!running) {
             running = true;
@@ -87,6 +105,7 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
             thread.start();
         }
         super.setStatus(DeviceStatus.ON);
+        this.notifyObservers("Turned on");
     }
 
     @Override
@@ -96,6 +115,7 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
             thread.interrupt();
         }
         super.setStatus(DeviceStatus.OFF);
+        this.notifyObservers("Turned off");
     }
 
     @Override
@@ -106,6 +126,30 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
     public void observe(SmartDevice device) {
         if (device instanceof ObservableDevice observable) {
             observable.addObserver(this);
+        }
+    }
+
+    @Override
+    public void addObserver(DeviceObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(DeviceObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventDescription);
+        }
+    }
+
+    @Override
+    public void notifyObservers(LogType eventType, String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventType, eventDescription);
         }
     }
 }

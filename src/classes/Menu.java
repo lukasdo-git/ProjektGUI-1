@@ -5,7 +5,10 @@ import classes.devices.*;
 import classes.house.House;
 import classes.house.Room;
 import enums.DeviceType;
+import enums.LogType;
 import enums.RoomType;
+import interfaces.DeviceObserver;
+import interfaces.ObservableDevice;
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -21,6 +24,9 @@ public class Menu {
     private static ArrayList<House> houseArrayList = new ArrayList<>();
     private boolean running;
     private Scanner scanner = new Scanner(System.in);
+
+    private final Logger logger = new Logger();
+    private final DeviceObserver logObserver = new LoggerObserver(logger);
 
 
     public void run() {
@@ -430,6 +436,10 @@ public class Menu {
             newDevice = new InfoTablet(id, name, chosenRoom.getDevices().get(scan-1));
         }
         chosenRoom.addDevice(newDevice);
+        if (newDevice instanceof ObservableDevice observable) {
+            observable.addObserver(logObserver);
+            logger.log(newDevice, LogType.DEVICE_ADDED, "Dodano nowe urządzenie do pokoju.");
+        }
     }
 
 
