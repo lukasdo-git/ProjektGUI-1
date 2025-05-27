@@ -430,18 +430,20 @@ public class Menu {
             newDevice = new Lightbulb(id, name, h, s, v);
         }
         if(type == DeviceType.OUTLET) {
-
+            System.out.print("Podaj limit poboru prądu: ");
+            int scan = Integer.parseInt(scanner.nextLine());
+            newDevice = new Outlet(id, name, scan);
         }
         if(type == DeviceType.INFOTABLET) {
-            System.out.println("Podaj numer urządzenia którego informacje ma wyświetlać");
+            System.out.print("Podaj numer urządzenia którego informacje ma wyświetlać: ");
             int scan = Integer.parseInt(scanner.nextLine());
             newDevice = new InfoTablet(id, name, chosenRoom.getDevices().get(scan-1));
         }
-        chosenRoom.addDevice(newDevice);
         if (newDevice instanceof ObservableDevice observable) {
             observable.addObserver(logObserver);
             logger.log(newDevice, LogType.DEVICE_ADDED, "Dodano nowe urządzenie do pokoju.");
         }
+        chosenRoom.addDevice(newDevice);
     }
 
 
