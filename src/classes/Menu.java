@@ -425,7 +425,9 @@ public class Menu {
 
         }
         if(type == DeviceType.INFOTABLET) {
-            newDevice = new InfoTablet(id, name);
+            System.out.println("Podaj numer urządzenia którego informacje ma wyświetlać");
+            int scan = Integer.parseInt(scanner.nextLine());
+            newDevice = new InfoTablet(id, name, chosenRoom.getDevices().get(scan-1));
         }
         chosenRoom.addDevice(newDevice);
     }

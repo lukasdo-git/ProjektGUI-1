@@ -54,6 +54,6 @@ public abstract class SmartDevice {
 
     @Override
     public String toString() {
-        return "["+this.deviceUUID +"] "+this.deviceName+": \tStatus "+this.deviceStatus;
+        return "["+this.deviceUUID +"] "+this.deviceName+": \tStatus "+this.deviceStatus +" ";
     }
 }

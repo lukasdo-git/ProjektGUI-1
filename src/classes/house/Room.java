@@ -37,7 +37,7 @@ public class Room {
         this.ambientTemp = ambientTemp;
         this.currentTemp = ambientTemp + (Math.random()*10) - 5;
         this.ambientHumidity = (Math.random()*5) + 12;
-        this.currentHumidity = ambientHumidity;
+        this.currentHumidity = ambientHumidity + (Math.random()*2) - 1;
         this.thread = new Thread(() -> {
             while(running) {
                 try{

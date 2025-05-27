@@ -12,9 +12,10 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Switchabl
     private Thread thread;
     private boolean running = false;
 
-    public InfoTablet(int deviceId, String name) {
+    public InfoTablet(int deviceId, String name, SmartDevice device) {
         super(deviceId, name, DeviceType.INFOTABLET);
         super.setStatus(DeviceStatus.ON);
+        observe(device);
         this.thread = createThread();
         thread.start();
     }
