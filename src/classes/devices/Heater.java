@@ -39,7 +39,11 @@ public class Heater extends SmartDevice implements Switchable {
 
     @Override
     public void simulate() throws IllegalAccessException {
-        System.out.println(super.toString()+"\t ogrzewa pokój "+this.room);
+        if(super.getStatus() == DeviceStatus.ON) {
+            if(super.isLive()) {
+                System.out.println(super.toString() + "\t ogrzewa pokój " + this.room.getName());
+            }
+        }
     }
 
     public int getHeatingPower() {
@@ -59,5 +63,9 @@ public class Heater extends SmartDevice implements Switchable {
     @Override
     public boolean isOn() {
         return super.getStatus() == DeviceStatus.ON;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

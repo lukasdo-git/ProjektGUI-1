@@ -2,6 +2,7 @@ package classes;
 
 import abstracts.SmartDevice;
 import classes.devices.Heater;
+import classes.devices.Lightbulb;
 import classes.devices.TemperatureSensor;
 import classes.house.House;
 import classes.house.Room;
@@ -83,15 +84,27 @@ public class Menu {
                 System.out.println("Zarejestrowane urządzenia:");
                 for(SmartDevice device : chosenRoom.getDevices()) {
                     System.out.println("["+device.getDeviceId()+"] "+device.getDeviceName());
-                    System.out.println("Dostępne polecenia: (W)róć, (D)odaj urządzenie, (U)suń urządzenie, (Z)mień nazwę urządzenia");
-                    System.out.println("lub podaj numer urządzenia (aby symulować w czasie rzeczywistym) ");
                 }
+                System.out.println("Dostępne polecenia: (W)róć, (D)odaj urządzenie, (U)suń urządzenie, (Z)mień nazwę urządzenia, (R)eguły automatyczne");
+                System.out.println("lub podaj numer urządzenia (aby symulować w czasie rzeczywistym) ");
             }
         }
 
         // menu zarządzania regułami automatycznymi
         if(menu == 3) {
             System.out.println("\nZarządzasz regułami w pokoju : ["+chosenRoom.getId()+"] "+chosenRoom.getName());
+
+            if (chosenRoom.getRules().isEmpty()) {
+                System.out.println("Brak zdefiniowanych reguł.");
+                System.out.println("Dostępne polecenia: (W)róć, (D)odaj regułę");
+            } else {
+                int i = 1;
+                for (Rule<?> rule : chosenRoom.getRules()) {
+                    System.out.println("[" + (i++) + "] Reguła dla urządzenia: " + rule.getActionDevice().getDeviceName());
+                }
+                System.out.println("Dostępne polecenia: (W)róć, (D)odaj regułę, (U)suń regułę");
+                System.out.println("Lub podaj numer reguły aby ją uruchomić (force execute)");
+            }
         }
 
         System.out.print("\bPodaj polecenie: ");
@@ -101,6 +114,61 @@ public class Menu {
 
     private void execute(String input) {
         char command = Character.toLowerCase(input.charAt(0));
+
+        if(menu == 3) {
+            if (command == 'w') {
+                menu = 2;
+                return;
+            }
+            if (command == 'd') {
+                System.out.println("Dostępne urządzenia w tym pokoju:");
+                int i = 1;
+                for (SmartDevice device : chosenRoom.getDevices()) {
+                    System.out.println("[" + i + "] " + device.getDeviceName() + " (" + device.getClass().getSimpleName() + ")");
+                    i++;
+                }
+
+                System.out.print("Wybierz urządzenie do obserwowania (warunek): ");
+                int condIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                SmartDevice condDevice = chosenRoom.getDevices().get(condIndex);
+
+                System.out.print("Wybierz urządzenie do sterowania (akcja): ");
+                int actionIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                SmartDevice actionDevice = chosenRoom.getDevices().get(actionIndex);
+
+                System.out.println("Wprowadź warunek w postaci: 'temp < 19' lub 'status == ACTIVE'");
+                String condition = scanner.nextLine();
+
+                System.out.println("Wprowadź akcję w postaci: 'turnOn', 'turnOff', 'changeColor 120 0.5 1.0'");
+                String action = scanner.nextLine();
+
+                RuleManager rm = RuleManager.getInstance(houseArrayList);
+                Rule<? extends SmartDevice> rule = rm.parseRule(condDevice, actionDevice, condition, action);
+                if (rule != null) {
+                    chosenRoom.addRule(rule);
+                    System.out.println("Dodano regułę.");
+                } else {
+                    System.out.println("Nie udało się utworzyć reguły.");
+                }
+            }
+            if(!chosenRoom.hasRules()) return;
+            if (command == 'u') {
+                System.out.println("Podaj numer reguły: ");
+                int n = Integer.parseInt(scanner.nextLine());
+                Rule rule;
+                try {
+                    rule = chosenRoom.getRules().get(n-1);
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("Ta reguła nie istnieje!");
+                    execute(""+command);
+                    return;
+                }
+                System.out.println("Usunięto regułę.");
+            }
+            if(Character.isDigit(command)) {
+                chosenRoom.getRules().get(Integer.parseInt(input)-1).forceExecute();
+            }
+        }
 
         if(menu == 2) {
             if(command == 'w') {
@@ -160,7 +228,9 @@ public class Menu {
                 String newName = scanner.nextLine();
                 device.setDeviceName(newName);
             }
-            if(command == 'r') return; //dodać reguły
+            if(command == 'r') {
+                menu = 3;
+            }
             if(Character.isDigit(command)) {
                 chosenRoom.getDevices().get(Integer.parseInt(input)-1).setLive();
             }
@@ -337,10 +407,27 @@ public class Menu {
                 h = Integer.parseInt(input[0]);
                 s = Double.parseDouble(input[1]);
                 v = Double.parseDouble(input[2]);
+                if(h<0 || h>360) {
+                    System.out.println("Niepoprawna wartość H -> musi być 0-360");
+                    continue;
+                }
+                if(s<0 || s>1) {
+                    System.out.println("Niepoprawna wartość S -> musi być 0.0-1.0");
+                    continue;
+                }
+                if(v<0 || v>1) {
+                    System.out.println("Niepoprawna wartość V -> musi być 0.0-1.0");
+                    continue;
+                }
+                repeat = false;
             }
+            newDevice = new Lightbulb(id, name, h, s, v);
+        }
+        if(type == DeviceType.OUTLET) {
 
         }
-        if(type == DeviceType.OUTLET) {}
         chosenRoom.addDevice(newDevice);
     }
+
+
 }

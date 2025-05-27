@@ -8,9 +8,9 @@ import interfaces.Switchable;
 import java.awt.*;
 
 public class Lightbulb extends SmartDevice implements Switchable {
-    private final int hue;
-    private final double saturation;
-    private final double value;
+    private int hue;
+    private double saturation;
+    private double value;
     private DeviceStatus status;
 
     public Lightbulb(int deviceId, String deviceName, int hue, double saturation, double value) {
@@ -41,6 +41,22 @@ public class Lightbulb extends SmartDevice implements Switchable {
     @Override
     public boolean isOn() {
         return status == DeviceStatus.ON;
+    }
+
+    public void changeColor(int hue, double saturation, double value) {
+        if(hue<0 || hue>360) {
+            System.out.println("H musi być 0-360");
+            return;
+        }
+        if(saturation<0 || saturation>1) {
+            System.out.println("S musi być 0.0-1.0");
+        }
+        if(value<0 || value>1) {
+            System.out.println("V musi być 0.0-1.0");
+        }
+        this.hue = hue;
+        this.saturation = saturation;
+        this.value = value;
     }
 
     public Color getRGBColor() {

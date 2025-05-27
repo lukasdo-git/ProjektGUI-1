@@ -8,23 +8,27 @@ import java.util.function.Predicate;
 public class Rule<T extends SmartDevice> {
     private final Predicate<T> condition;
     private final Consumer<T> action;
-    private final T device;
+    private final T actionDevice;
 
-    public Rule(Predicate<T> condition, Consumer<T> action, T resultDevice) {
+    public Rule(Predicate<T> condition, Consumer<T> action, T actionDevice) {
         this.condition = condition;
         this.action = action;
-        this.device = resultDevice;
+        this.actionDevice = actionDevice;
     }
 
     public boolean test() {
-        return condition.test(device);
+        return condition.test(actionDevice);
     }
 
     public void execute() {
-        if(test()) action.accept(device);
+        if(test()) action.accept(actionDevice);
     }
 
-    public T getDevice() {
-        return device;
+    public void forceExecute() {
+        action.accept(actionDevice);
+    }
+
+    public T getActionDevice() {
+        return actionDevice;
     }
 }

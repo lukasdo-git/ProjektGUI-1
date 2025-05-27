@@ -57,6 +57,10 @@ public class Room {
         return rules;
     }
 
+    public Boolean hasRules() {
+        return rules.size() > 0;
+    }
+
     public String getName() {
         return name;
     }
@@ -81,6 +85,9 @@ public class Room {
 
         if(device instanceof TemperatureSensor sensor) {
             sensor.setRoom(this);
+        }
+        if(device instanceof Heater heater) {
+            heater.setRoom(this);
         }
     }
 
