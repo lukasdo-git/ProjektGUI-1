@@ -177,6 +177,7 @@ public class Menu {
         if(menu == 2) {
             if(command == 'w') {
                 menu = 1;
+                return;
             }
             if(command == 'd') {
                 System.out.println("ID urządzenia: ["+(chosenRoom.getNumOfDevices()+1)+"]");
@@ -243,6 +244,7 @@ public class Menu {
         if(menu == 1) {
             if(command == 'w') {
                 menu = 0;
+                return;
             }
             if(command == 'd') {
                 System.out.println("ID pokoju: ["+(chosenHouse.getNumOfRooms()+1)+"]");

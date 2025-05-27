@@ -11,7 +11,6 @@ import interfaces.SensorDevice;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observer;
 
 public class TemperatureSensor extends SmartDevice implements SensorDevice<Double>, ObservableDevice {
 
@@ -146,6 +145,6 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         this.batteryCycles -= 1;
         this.temperature = this.room.getTemperature();
         if(super.isLive()) System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
-        this.notifyObservers("Temperature: " + this.temperature);
+        this.notifyObservers(LogType.READING, "Temperature: " + this.temperature);
     }
 }
