@@ -11,16 +11,15 @@ import interfaces.Switchable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observer;
 
 public class Heater extends SmartDevice implements Switchable, ObservableDevice {
     private boolean running;
     private Thread thread;
-    private final int heatingPower;
-    private final int heatCycleTime = 1000;
+    private int heatingPower;
+    private int heatCycleTime = 1000;
     private Room room;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public Heater(int deviceId, String deviceName, int heatingPower) {
         super(deviceId, deviceName, DeviceType.HEATER);
@@ -42,21 +41,14 @@ public class Heater extends SmartDevice implements Switchable, ObservableDevice 
             }
         });
         thread.start();
-
     }
 
     @Override
     public void simulate() throws IllegalAccessException {
         if(super.getStatus() == DeviceStatus.ON) {
             this.notifyObservers(LogType.READING, "is warming up room "+this.room.getName());
-            if(super.isLive()) {
-                System.out.println(super.toString() + "\t ogrzewa pokój " + this.room.getName());
-            }
+            if(super.isLive()) System.out.println(super.toString() + "\t ogrzewa pokój " + this.room.getName());
         }
-    }
-
-    public int getHeatingPower() {
-        return heatingPower;
     }
 
     @Override
@@ -74,14 +66,6 @@ public class Heater extends SmartDevice implements Switchable, ObservableDevice 
     @Override
     public boolean isOn() {
         return super.getStatus() == DeviceStatus.ON;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public Room getRoom() {
-        return room;
     }
 
     @Override
@@ -107,4 +91,18 @@ public class Heater extends SmartDevice implements Switchable, ObservableDevice 
             observer.onDeviceEvent(this, eventType, eventDescription);
         }
     }
+
+    public int getHeatingPower() {
+        return heatingPower;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+
 }

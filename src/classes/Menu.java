@@ -167,6 +167,7 @@ public class Menu {
                     execute(""+command);
                     return;
                 }
+                chosenRoom.removeRule(n-1);
                 System.out.println("Usunięto regułę.");
             }
             if(Character.isDigit(command)) {

@@ -38,14 +38,6 @@ public class Outlet extends SmartDevice implements Switchable, ObservableDevice 
         });
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public Room getRoom() {
-        return this.room;
-    }
-
     @Override
     public void simulate() throws IllegalAccessException {
         if (getStatus() == DeviceStatus.FAULT) {
@@ -108,5 +100,13 @@ public class Outlet extends SmartDevice implements Switchable, ObservableDevice 
         for(DeviceObserver observer : observers) {
             observer.onDeviceEvent(this, eventType, eventDescription);
         }
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return this.room;
     }
 }

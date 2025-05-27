@@ -22,12 +22,12 @@ public class Room {
     private Thread thread;
     private boolean running = true;
 
-    private final List<Rule<? extends SmartDevice>> rules = new ArrayList<>();
-
     private double currentTemp;
     private final double ambientTemp;
     private double currentHumidity;
     private final double ambientHumidity;
+
+    private final List<Rule<? extends SmartDevice>> rules = new ArrayList<>();
 
     public Room(String name, int id, RoomType type, double ambientTemp) {
         this.name = name;

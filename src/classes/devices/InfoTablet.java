@@ -28,47 +28,6 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
         thread.start();
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public Room getRoom() {
-        return this.room;
-    }
-
-    private Thread createThread() {
-        return new Thread(() -> {
-            while (running) {
-                try {
-                    simulate();
-                    Thread.sleep(500);
-                } catch (IllegalAccessException e) {
-                    System.out.println(e.getMessage());
-                    super.setStatus(DeviceStatus.FAULT);
-                    attemptRestart();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    super.setStatus(DeviceStatus.OFF);
-                }
-            }
-        });
-    }
-
-    private void attemptRestart() {
-        new Thread(() -> {
-
-            System.out.println(super.toString() + "\t Próba automatycznego restartu...");
-            try {
-                Thread.sleep(3000); // opóźnienie restartu
-                if (getStatus() == DeviceStatus.FAULT) {
-                    System.out.println(super.toString() + "\t Restart powiódł się.");
-                    setStatus(DeviceStatus.ON);
-                    notifyObservers(LogType.FAULT_FIXED, "Fault fixed");
-                }
-            } catch (InterruptedException ignored) {}
-        }).start();
-    }
-
     @Override
     public void simulate() throws IllegalAccessException {
         if (super.getStatus() == DeviceStatus.OFF) {
@@ -121,9 +80,7 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
     @Override
     public void turnOff() {
         running = false;
-        if (thread != null && thread.isAlive()) {
-            thread.interrupt();
-        }
+        if (thread != null && thread.isAlive()) thread.interrupt();
         super.setStatus(DeviceStatus.OFF);
         this.notifyObservers("Turned off");
     }
@@ -131,12 +88,6 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
     @Override
     public boolean isOn() {
         return super.getStatus() == DeviceStatus.ON;
-    }
-
-    public void observe(SmartDevice device) {
-        if (device instanceof ObservableDevice observable) {
-            observable.addObserver(this);
-        }
     }
 
     @Override
@@ -161,5 +112,51 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
         for(DeviceObserver observer : observers) {
             observer.onDeviceEvent(this, eventType, eventDescription);
         }
+    }
+
+    private Thread createThread() {
+        return new Thread(() -> {
+            while (running) {
+                try {
+                    simulate();
+                    Thread.sleep(500);
+                } catch (IllegalAccessException e) {
+                    System.out.println(e.getMessage());
+                    super.setStatus(DeviceStatus.FAULT);
+                    attemptRestart();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    super.setStatus(DeviceStatus.OFF);
+                }
+            }
+        });
+    }
+
+    private void attemptRestart() {
+        new Thread(() -> {
+            System.out.println(super.toString() + "\t Próba automatycznego restartu...");
+            try {
+                Thread.sleep(3000); // opóźnienie restartu
+                if (getStatus() == DeviceStatus.FAULT) {
+                    System.out.println(super.toString() + "\t Restart powiódł się.");
+                    setStatus(DeviceStatus.ON);
+                    notifyObservers(LogType.FAULT_FIXED, "Fault fixed");
+                }
+            } catch (InterruptedException ignored) {}
+        }).start();
+    }
+
+    public void observe(SmartDevice device) {
+        if (device instanceof ObservableDevice observable) {
+            observable.addObserver(this);
+        }
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return this.room;
     }
 }

@@ -30,33 +30,6 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         super.setStatus(DeviceStatus.ACTIVE);
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
-
-        if(!started) {
-            started = true;
-            running = true;
-
-            this.thread = new Thread(() -> {
-                while(running) {
-                    try {
-                        this.simulate();
-                        Thread.sleep(readCycleTime);
-                    } catch (IllegalAccessException | InterruptedException e) {
-                        running = false;
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-            );
-            thread.start();
-        }
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
     @Override
     public void addObserver(DeviceObserver observer) {
         observers.add(observer);
@@ -92,6 +65,31 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         return "Celsius";
     }
 
+    @Override
+    public void simulate() throws IllegalAccessException {
+        if(super.getStatus() == DeviceStatus.FAULT) {
+            if(super.isLive()) System.out.println(super.toString() + "\t BŁĄD CZUJNIKA");
+            notifyObservers(LogType.FAULT_DETECTED, "Fault detected");
+            throw new IllegalAccessException("Błąd czujnika");
+        }
+        if(this.batteryCycles <=15) {
+            super.setStatus(DeviceStatus.LOW_BATTERY);
+            notifyObservers(LogType.FAULT_DETECTED, "Battery is low");
+            if(super.isLive()) System.out.println(super.toString() + "\t UWAGA - niski poziom baterii");
+        }
+
+        double rollForFault = Math.random();
+        if(rollForFault < (super.getStatus() == DeviceStatus.LOW_BATTERY ? (0.15 - (this.batteryCycles*0.01)) : 0.02)) {
+            super.setStatus(DeviceStatus.FAULT);
+            this.running = false;
+        }
+
+        this.batteryCycles -= 1;
+        this.temperature = this.room.getTemperature();
+        if(super.isLive()) System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
+        this.notifyObservers(LogType.READING, "Temperature: " + this.temperature);
+    }
+
     public void changeBattery() {
 
         running = false;
@@ -124,31 +122,32 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
             }
         });
         thread.start();
-
     }
 
-    @Override
-    public void simulate() throws IllegalAccessException {
-        if(super.getStatus() == DeviceStatus.FAULT) {
-            if(super.isLive()) System.out.println(super.toString() + "\t BŁĄD CZUJNIKA");
-            notifyObservers(LogType.FAULT_DETECTED, "Fault detected");
-            throw new IllegalAccessException("Błąd czujnika");
-        }
-        if(this.batteryCycles <=15) {
-            super.setStatus(DeviceStatus.LOW_BATTERY);
-            notifyObservers(LogType.FAULT_DETECTED, "Battery is low");
-            if(super.isLive()) System.out.println(super.toString() + "\t UWAGA - niski poziom baterii");
-        }
+    public void setRoom(Room room) {
+        this.room = room;
 
-        double rollForFault = Math.random();
-        if(rollForFault < (super.getStatus() == DeviceStatus.LOW_BATTERY ? (0.15 - (this.batteryCycles*0.01)) : 0.02)) {
-            super.setStatus(DeviceStatus.FAULT);
-            this.running = false;
-        }
+        if(!started) {
+            started = true;
+            running = true;
 
-        this.batteryCycles -= 1;
-        this.temperature = this.room.getTemperature();
-        if(super.isLive()) System.out.println(super.toString()+"\t odczyt temperatury: " + this.readValue());
-        this.notifyObservers(LogType.READING, "Temperature: " + this.temperature);
+            this.thread = new Thread(() -> {
+                while(running) {
+                    try {
+                        this.simulate();
+                        Thread.sleep(readCycleTime);
+                    } catch (IllegalAccessException | InterruptedException e) {
+                        running = false;
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            );
+            thread.start();
+        }
+    }
+
+    public Room getRoom() {
+        return room;
     }
 }

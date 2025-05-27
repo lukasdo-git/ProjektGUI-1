@@ -16,11 +16,11 @@ public class AirCondition extends SmartDevice implements Switchable, ObservableD
 
     private boolean running;
     private Thread thread;
-    private final int chillingPower;
-    private final int chillingCycleTime = 1000;
+    private int chillingPower;
+    private int chillingCycleTime = 1000;
     private Room room;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public AirCondition(int deviceId, String deviceName, int chillingPower) {
         super(deviceId, deviceName, DeviceType.AIRCON);
@@ -54,10 +54,6 @@ public class AirCondition extends SmartDevice implements Switchable, ObservableD
 
     }
 
-    public int getCoolingPower() {
-        return chillingPower;
-    }
-
     @Override
     public void turnOn() {
         super.setStatus(DeviceStatus.ON);
@@ -73,14 +69,6 @@ public class AirCondition extends SmartDevice implements Switchable, ObservableD
     @Override
     public boolean isOn() {
         return super.getStatus() == DeviceStatus.ON;
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public Room getRoom() {
-        return room;
     }
 
     @Override
@@ -106,4 +94,17 @@ public class AirCondition extends SmartDevice implements Switchable, ObservableD
             observer.onDeviceEvent(this, eventType, eventDescription);
         }
     }
+
+    public int getCoolingPower() {
+        return chillingPower;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
 }

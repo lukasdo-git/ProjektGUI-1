@@ -7,6 +7,7 @@ import enums.DeviceType;
 import java.util.UUID;
 
 public abstract class SmartDevice {
+
     private UUID deviceUUID;
     private int deviceId;
     private String deviceName;
@@ -24,9 +25,13 @@ public abstract class SmartDevice {
     }
 
     public abstract void simulate() throws IllegalAccessException;
-    public void setLive() {
-        this.live = !this.live;
+
+    @Override
+    public String toString() {
+        return "["+this.deviceUUID +"] "+this.deviceName+": \tStatus "+this.deviceStatus +" ";
     }
+
+    public void setLive() { this.live = !this.live;}
     public boolean isLive() {
         return this.live;
     }
@@ -37,34 +42,22 @@ public abstract class SmartDevice {
     public DeviceStatus getStatus() {
         return deviceStatus;
     };
-    public UUID getDeviceUUID() {
-        return deviceUUID;
-    }
+
     public int getDeviceId() {
         return deviceId;
     }
+
     public String getDeviceName() {
         return deviceName;
     }
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
+
     public DeviceType getDeviceType() {
         return deviceType;
     }
 
-
-    @Override
-    public String toString() {
-        return "["+this.deviceUUID +"] "+this.deviceName+": \tStatus "+this.deviceStatus +" ";
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public Room getRoom() {
-        return room;
-    }
-
+    public void setRoom(Room room) { this.room = room; }
+    public Room getRoom() { return room; }
 }

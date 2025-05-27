@@ -20,7 +20,6 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
     private DeviceStatus status;
     private Room room;
 
-
     private final List<DeviceObserver> observers = new ArrayList<>();
 
     public Lightbulb(int deviceId, String deviceName, int hue, double saturation, double value) {
@@ -28,14 +27,6 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
         this.saturation = saturation;
         this.value = value;
         super(deviceId, deviceName, DeviceType.LIGHTBULB);
-    }
-
-    public void setRoom(Room room) {
-        this.room = room;
-    }
-
-    public Room getRoom() {
-        return room;
     }
 
     @Override
@@ -62,6 +53,35 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
     @Override
     public boolean isOn() {
         return status == DeviceStatus.ON;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
+    public void addObserver(DeviceObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(DeviceObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventDescription);
+        }
+    }
+
+    @Override
+    public void notifyObservers(LogType eventType, String eventDescription) {
+        for(DeviceObserver observer : observers) {
+            observer.onDeviceEvent(this, eventType, eventDescription);
+        }
     }
 
     public void changeColor(int hue, double saturation, double value) {
@@ -113,32 +133,11 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
         return new Color(r, g, b);
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
-    @Override
-    public void addObserver(DeviceObserver observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(DeviceObserver observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers(String eventDescription) {
-        for(DeviceObserver observer : observers) {
-            observer.onDeviceEvent(this, eventDescription);
-        }
-    }
-
-    @Override
-    public void notifyObservers(LogType eventType, String eventDescription) {
-        for(DeviceObserver observer : observers) {
-            observer.onDeviceEvent(this, eventType, eventDescription);
-        }
+    public Room getRoom() {
+        return room;
     }
 }
