@@ -439,11 +439,11 @@ public class Menu {
             int scan = Integer.parseInt(scanner.nextLine());
             newDevice = new InfoTablet(id, name, chosenRoom.getDevices().get(scan-1));
         }
+        chosenRoom.addDevice(newDevice);
         if (newDevice instanceof ObservableDevice observable) {
             observable.addObserver(logObserver);
             logger.log(newDevice, LogType.DEVICE_ADDED, "Dodano nowe urządzenie do pokoju.");
         }
-        chosenRoom.addDevice(newDevice);
     }
 
 
