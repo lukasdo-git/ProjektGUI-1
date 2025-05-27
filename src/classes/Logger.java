@@ -1,6 +1,7 @@
 package classes;
 
 import abstracts.SmartDevice;
+import classes.house.Room;
 import enums.LogType;
 import interfaces.DeviceLogger;
 
@@ -41,14 +42,9 @@ public class Logger implements DeviceLogger {
         String timestamp = LocalDateTime.now().format(formatter);
 
         String roomName = "-";
-        try {
-            var method = device.getClass().getMethod("getRoom");
-            var room = method.invoke(device);
-            if (room != null) {
-                roomName = (String) room.getClass().getMethod("getName").invoke(room);
-            }
-        } catch (Exception e) {
-            // brak getRoom() lub błąd w refleksji
+        Room room = device.getRoom();
+        if (room != null) {
+            roomName = room.getName();
         }
 
         String line = String.format("%s %s %s %s %s %s", timestamp,

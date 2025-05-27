@@ -28,11 +28,11 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
         thread.start();
     }
 
-    private void setRoom(Room room) {
+    public void setRoom(Room room) {
         this.room = room;
     }
 
-    private Room getRoom() {
+    public Room getRoom() {
         return this.room;
     }
 

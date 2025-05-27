@@ -1,5 +1,6 @@
 package abstracts;
 
+import classes.house.Room;
 import enums.DeviceStatus;
 import enums.DeviceType;
 
@@ -11,6 +12,7 @@ public abstract class SmartDevice {
     private String deviceName;
     private DeviceStatus deviceStatus;
     private DeviceType deviceType;
+    private Room room;
     private boolean live;
 
     public SmartDevice(int deviceId, String deviceName, DeviceType deviceType) {
@@ -56,4 +58,13 @@ public abstract class SmartDevice {
     public String toString() {
         return "["+this.deviceUUID +"] "+this.deviceName+": \tStatus "+this.deviceStatus +" ";
     }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
 }

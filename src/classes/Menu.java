@@ -384,6 +384,7 @@ public class Menu {
 
     private void newDevice(int id, String name, DeviceType type) {
         SmartDevice newDevice = null;
+
         if(type == DeviceType.TEMPSENSOR || type == DeviceType.HUMIDITYSENSOR) {
             newDevice = type == DeviceType.TEMPSENSOR ? new TemperatureSensor(id, name) : new HumiditySensor(id, name);
         }
@@ -439,11 +440,12 @@ public class Menu {
             int scan = Integer.parseInt(scanner.nextLine());
             newDevice = new InfoTablet(id, name, chosenRoom.getDevices().get(scan-1));
         }
+
+        newDevice.setRoom(chosenRoom);
         chosenRoom.addDevice(newDevice);
-        if (newDevice instanceof ObservableDevice observable) {
-            observable.addObserver(logObserver);
-            logger.log(newDevice, LogType.DEVICE_ADDED, "Dodano nowe urządzenie do pokoju.");
-        }
+        ObservableDevice observable = (ObservableDevice) newDevice;
+        observable.addObserver(logObserver);
+        logger.log(newDevice, LogType.DEVICE_ADDED, "Dodano nowe urządzenie do pokoju.");
     }
 
 

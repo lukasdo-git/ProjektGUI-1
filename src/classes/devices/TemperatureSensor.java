@@ -53,6 +53,10 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
         }
     }
 
+    public Room getRoom() {
+        return room;
+    }
+
     @Override
     public void addObserver(DeviceObserver observer) {
         observers.add(observer);

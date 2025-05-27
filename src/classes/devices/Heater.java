@@ -45,10 +45,6 @@ public class Heater extends SmartDevice implements Switchable, ObservableDevice 
 
     }
 
-    public Room getRoom() {
-        return room;
-    }
-
     @Override
     public void simulate() throws IllegalAccessException {
         if(super.getStatus() == DeviceStatus.ON) {
@@ -82,6 +78,10 @@ public class Heater extends SmartDevice implements Switchable, ObservableDevice 
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public Room getRoom() {
+        return room;
     }
 
     @Override

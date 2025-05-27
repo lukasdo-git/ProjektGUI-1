@@ -30,11 +30,11 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
         super(deviceId, deviceName, DeviceType.LIGHTBULB);
     }
 
-    private void setRoom(Room room) {
+    public void setRoom(Room room) {
         this.room = room;
     }
 
-    private Room getRoom() {
+    public Room getRoom() {
         return room;
     }
 
