@@ -1,9 +1,7 @@
 package classes;
 
 import abstracts.SmartDevice;
-import classes.devices.Heater;
-import classes.devices.Lightbulb;
-import classes.devices.TemperatureSensor;
+import classes.devices.*;
 import classes.house.House;
 import classes.house.Room;
 import enums.DeviceType;
@@ -378,24 +376,24 @@ public class Menu {
 
     private void newDevice(int id, String name, DeviceType type) {
         SmartDevice newDevice = null;
-        if(type == DeviceType.TEMPSENSOR) {
-            newDevice = new TemperatureSensor(id, name);
+        if(type == DeviceType.TEMPSENSOR || type == DeviceType.HUMIDITYSENSOR) {
+            newDevice = type == DeviceType.TEMPSENSOR ? new TemperatureSensor(id, name) : new HumiditySensor(id, name);
         }
-        if(type == DeviceType.HEATER) {
-            System.out.print("Podaj moc grzewczą grzejnika (W): ");
-            int heatingPower = 0;
+        if(type == DeviceType.HEATER || type == DeviceType.AIRCON) {
+            System.out.print("Podaj moc urządzenia(W): ");
+            int power = 0;
             boolean repeat = true;
             while(repeat) {
                 try {
-                    heatingPower = Integer.parseInt(scanner.nextLine());
+                    power = Integer.parseInt(scanner.nextLine());
                     repeat = false;
                 } catch (InputMismatchException e) {
-                    System.out.println("Niepoprawnie podana moc grzewcza grzejnika!");
+                    System.out.println("Niepoprawnie podana moc!");
                     System.out.println("Musi być liczba całkowita, na przykład 1000");
                 }
             }
 
-            newDevice = new Heater(id, name, heatingPower);
+            newDevice = type == DeviceType.HEATER ? new Heater(id, name, power) : new AirCondition(id, name, power);
         }
         if(type == DeviceType.LIGHTBULB) {
             System.out.println("Podaj kolor na jaki świeci żarówka (H,S,V): ");
@@ -425,6 +423,9 @@ public class Menu {
         }
         if(type == DeviceType.OUTLET) {
 
+        }
+        if(type == DeviceType.INFOTABLET) {
+            newDevice = new InfoTablet(id, name);
         }
         chosenRoom.addDevice(newDevice);
     }

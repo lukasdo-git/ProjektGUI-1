@@ -2,7 +2,9 @@ package classes.house;
 
 import abstracts.SmartDevice;
 import classes.Rule;
+import classes.devices.AirCondition;
 import classes.devices.Heater;
+import classes.devices.HumiditySensor;
 import classes.devices.TemperatureSensor;
 import enums.DeviceStatus;
 import enums.RoomType;
@@ -24,6 +26,8 @@ public class Room {
 
     private double currentTemp;
     private final double ambientTemp;
+    private double currentHumidity;
+    private final double ambientHumidity;
 
     public Room(String name, int id, RoomType type, double ambientTemp) {
         this.name = name;
@@ -32,10 +36,13 @@ public class Room {
         this.devices = new ArrayList<>();
         this.ambientTemp = ambientTemp;
         this.currentTemp = ambientTemp + (Math.random()*10) - 5;
+        this.ambientHumidity = (Math.random()*5) + 12;
+        this.currentHumidity = ambientHumidity;
         this.thread = new Thread(() -> {
             while(running) {
                 try{
                     updateTemperature();
+                    updateHumidity();
                     Thread.sleep(600);
                 } catch(Exception e){
                     e.printStackTrace();
@@ -57,28 +64,16 @@ public class Room {
         return rules;
     }
 
-    public Boolean hasRules() {
-        return rules.size() > 0;
-    }
-
-    public String getName() {
-        return name;
-    }
+    public Boolean hasRules() { return rules.size() > 0; }
+    public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public RoomType getRoomType() { return type; }
     public int getId() { return id; }
-    public double getTemperature() {
-        return currentTemp;
-    }
-    public boolean hasDevices() {
-        return devices.size() > 0;
-    }
-    public List<SmartDevice> getDevices() {
-        return devices;
-    }
-    public int getNumOfDevices() {
-        return devices.size();
-    }
+    public double getTemperature() { return currentTemp; }
+    public double getHumidity() { return currentHumidity; }
+    public boolean hasDevices() { return devices.size() > 0; }
+    public List<SmartDevice> getDevices() { return devices; }
+    public int getNumOfDevices() { return devices.size(); }
 
     public void addDevice(SmartDevice device) {
         devices.add(device);
@@ -86,8 +81,14 @@ public class Room {
         if(device instanceof TemperatureSensor sensor) {
             sensor.setRoom(this);
         }
+        if(device instanceof HumiditySensor sensor) {
+            sensor.setRoom(this);
+        }
         if(device instanceof Heater heater) {
             heater.setRoom(this);
+        }
+        if(device instanceof AirCondition aircon) {
+            aircon.setRoom(this);
         }
     }
 
@@ -98,11 +99,14 @@ public class Room {
                 .collect(Collectors.toList());
     }
 
-    public void updateTemperature() {
+    private void updateTemperature() {
         if(currentTemp > ambientTemp) currentTemp -= (Math.random()*3)-1.5;
         if(currentTemp < ambientTemp) currentTemp += (Math.random()*3)-1.5;
 
         List<Heater> activeHeaters = getDevicesByType(Heater.class).stream()
+                .filter(h -> h.getStatus() == DeviceStatus.ON)
+                .toList();
+        List<AirCondition> activeAirconditioners = getDevicesByType(AirCondition.class).stream()
                 .filter(h -> h.getStatus() == DeviceStatus.ON)
                 .toList();
 
@@ -111,8 +115,17 @@ public class Room {
             totalHeatingPower += heater.getHeatingPower();
         }
 
-        currentTemp += 0.1 * ((double) totalHeatingPower /100);
+        int totalCoolingPower = 0;
+        for(AirCondition aircon : activeAirconditioners) {
+            totalCoolingPower += aircon.getCoolingPower();
+        }
+
+        currentTemp += 0.1 * ((double) (totalHeatingPower-totalCoolingPower) /100);
     }
 
+    private void updateHumidity() {
+        if(currentHumidity > ambientHumidity) currentHumidity -= Math.random();
+        if(currentHumidity < ambientHumidity) currentHumidity += Math.random();
+    }
 
 }
