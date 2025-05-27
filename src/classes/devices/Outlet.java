@@ -1,6 +1,7 @@
 package classes.devices;
 
 import abstracts.SmartDevice;
+import classes.house.Room;
 import enums.DeviceStatus;
 import enums.DeviceType;
 import enums.LogType;
@@ -16,6 +17,7 @@ public class Outlet extends SmartDevice implements Switchable, ObservableDevice 
     private double totalEnergyConsumed;
     private final int overloadThreshold;
     boolean running = true;
+    private Room room;
 
     private final List<DeviceObserver> observers = new ArrayList<>();
 
@@ -34,6 +36,14 @@ public class Outlet extends SmartDevice implements Switchable, ObservableDevice 
                 }
             }
         });
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public Room getRoom() {
+        return this.room;
     }
 
     @Override

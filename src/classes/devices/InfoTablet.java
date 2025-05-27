@@ -1,6 +1,7 @@
 package classes.devices;
 
 import abstracts.SmartDevice;
+import classes.house.Room;
 import enums.DeviceStatus;
 import enums.DeviceType;
 import enums.LogType;
@@ -15,6 +16,7 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
 
     private Thread thread;
     private boolean running = false;
+    private Room room;
 
     private final List<DeviceObserver> observers = new ArrayList<>();
 
@@ -24,6 +26,14 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
         observe(device);
         this.thread = createThread();
         thread.start();
+    }
+
+    private void setRoom(Room room) {
+        this.room = room;
+    }
+
+    private Room getRoom() {
+        return this.room;
     }
 
     private Thread createThread() {

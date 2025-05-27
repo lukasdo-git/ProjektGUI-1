@@ -29,6 +29,10 @@ public class HumiditySensor extends SmartDevice implements SensorDevice<Double>,
         super.setStatus(DeviceStatus.ON);
     }
 
+    public Room getRoom() {
+        return room;
+    }
+
     @Override
     public void addObserver(DeviceObserver observer) {
         observers.add(observer);

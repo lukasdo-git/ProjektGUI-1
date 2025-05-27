@@ -1,6 +1,7 @@
 package classes.devices;
 
 import abstracts.SmartDevice;
+import classes.house.Room;
 import enums.DeviceStatus;
 import enums.DeviceType;
 import enums.LogType;
@@ -17,6 +18,8 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
     private double saturation;
     private double value;
     private DeviceStatus status;
+    private Room room;
+
 
     private final List<DeviceObserver> observers = new ArrayList<>();
 
@@ -25,6 +28,14 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
         this.saturation = saturation;
         this.value = value;
         super(deviceId, deviceName, DeviceType.LIGHTBULB);
+    }
+
+    private void setRoom(Room room) {
+        this.room = room;
+    }
+
+    private Room getRoom() {
+        return room;
     }
 
     @Override

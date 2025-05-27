@@ -43,6 +43,9 @@ public class AirCondition extends SmartDevice implements Switchable, ObservableD
         thread.start();
     }
 
+    public Room getRoom() {
+        return room;
+    }
 
     @Override
     public void simulate() throws IllegalAccessException {

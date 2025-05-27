@@ -45,6 +45,9 @@ public class Heater extends SmartDevice implements Switchable, ObservableDevice 
 
     }
 
+    public Room getRoom() {
+        return room;
+    }
 
     @Override
     public void simulate() throws IllegalAccessException {
