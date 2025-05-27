@@ -18,7 +18,7 @@ public class InfoTablet extends SmartDevice implements DeviceObserver, Observabl
     private boolean running = false;
     private Room room;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public InfoTablet(int deviceId, String name, SmartDevice device) {
         super(deviceId, name, DeviceType.INFOTABLET);

@@ -6,7 +6,7 @@ import interfaces.DeviceObserver;
 
 public class LoggerObserver implements DeviceObserver {
 
-    private final Logger logger;
+    private Logger logger;
 
     public LoggerObserver(Logger logger) {
         this.logger = logger;

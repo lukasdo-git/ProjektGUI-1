@@ -16,18 +16,18 @@ import java.util.stream.Collectors;
 public class Room {
 
     private String name;
-    private final int id;
-    private final RoomType type;
+    private int id;
+    private RoomType type;
     private List<SmartDevice> devices;
     private Thread thread;
     private boolean running = true;
 
     private double currentTemp;
-    private final double ambientTemp;
+    private double ambientTemp;
     private double currentHumidity;
-    private final double ambientHumidity;
+    private double ambientHumidity;
 
-    private final List<Rule<? extends SmartDevice>> rules = new ArrayList<>();
+    private List<Rule<? extends SmartDevice>> rules = new ArrayList<>();
 
     public Room(String name, int id, RoomType type, double ambientTemp) {
         this.name = name;

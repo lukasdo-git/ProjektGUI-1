@@ -15,8 +15,8 @@ import java.util.function.Predicate;
 public class RuleManager {
 
     private static RuleManager instance;
-    private final List<House> houseList;
-    private final Thread ruleThread;
+    private List<House> houseList;
+    private Thread ruleThread;
     private boolean running = true;
 
     public static RuleManager getInstance(List<House> houseList) {

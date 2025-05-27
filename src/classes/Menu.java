@@ -16,17 +16,18 @@ import java.util.Scanner;
 
 public class Menu {
 
+    private static ArrayList<House> houseArrayList = new ArrayList<>();
     private int menu;
     private int chosenHouseNumber;
     private House chosenHouse;
     private int chosenRoomNumber;
     private Room chosenRoom;
-    private static ArrayList<House> houseArrayList = new ArrayList<>();
+
     private boolean running;
     private Scanner scanner = new Scanner(System.in);
 
-    private final Logger logger = new Logger();
-    private final DeviceObserver logObserver = new LoggerObserver(logger);
+    private Logger logger = new Logger();
+    private DeviceObserver logObserver = new LoggerObserver(logger);
 
 
     public void run() {

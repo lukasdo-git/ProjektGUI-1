@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Rule<T extends SmartDevice> {
-    private final Predicate<T> condition;
-    private final Consumer<T> action;
-    private final T actionDevice;
+    private Predicate<T> condition;
+    private Consumer<T> action;
+    private T actionDevice;
 
     public Rule(Predicate<T> condition, Consumer<T> action, T actionDevice) {
         this.condition = condition;

@@ -15,11 +15,11 @@ import java.util.List;
 public class Outlet extends SmartDevice implements Switchable, ObservableDevice {
     private boolean powered;
     private double totalEnergyConsumed;
-    private final int overloadThreshold;
+    private int overloadThreshold;
     boolean running = true;
     private Room room;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public Outlet(int deviceId, String deviceName, int overloadThreshold) {
         super(deviceId, deviceName, DeviceType.OUTLET);

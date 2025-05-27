@@ -8,11 +8,11 @@ import java.util.UUID;
 
 public abstract class SmartDevice {
 
-    private UUID deviceUUID;
-    private int deviceId;
+    private final UUID deviceUUID;
+    private final int deviceId;
     private String deviceName;
     private DeviceStatus deviceStatus;
-    private DeviceType deviceType;
+    private final DeviceType deviceType;
     private Room room;
     private boolean live;
 
@@ -38,10 +38,11 @@ public abstract class SmartDevice {
 
     public void setStatus(DeviceStatus status) {
         this.deviceStatus = status;
-    };
+    }
+
     public DeviceStatus getStatus() {
         return deviceStatus;
-    };
+    }
 
     public int getDeviceId() {
         return deviceId;

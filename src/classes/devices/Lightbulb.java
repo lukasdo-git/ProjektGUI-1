@@ -20,7 +20,7 @@ public class Lightbulb extends SmartDevice implements Switchable, ObservableDevi
     private DeviceStatus status;
     private Room room;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public Lightbulb(int deviceId, String deviceName, int hue, double saturation, double value) {
         this.hue = hue;

@@ -23,7 +23,7 @@ public class TemperatureSensor extends SmartDevice implements SensorDevice<Doubl
     private boolean running = false;
     private boolean started = false;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public TemperatureSensor(int deviceId, String deviceName) {
         super(deviceId, deviceName, DeviceType.TEMPSENSOR);

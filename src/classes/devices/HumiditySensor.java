@@ -22,7 +22,7 @@ public class HumiditySensor extends SmartDevice implements SensorDevice<Double>,
     private boolean running = false;
     private boolean started = false;
 
-    private final List<DeviceObserver> observers = new ArrayList<>();
+    private List<DeviceObserver> observers = new ArrayList<>();
 
     public HumiditySensor(int deviceId, String deviceName) {
         super(deviceId, deviceName, DeviceType.HUMIDITYSENSOR);
